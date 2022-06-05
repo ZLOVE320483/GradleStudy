@@ -1,0 +1,68 @@
+this.gradle.addBuildListener(new BuildListener() {
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+        systemPrintln("settingsEvaluated, setting.gradle初始化完成, root project name  = ${settings.rootProject.name}")
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+        systemPrintln("projectsLoaded, project 完成项目构建初始化阶段...")
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        systemPrintln("projectsEvaluated, 完成项目的配置阶段...")
+    }
+
+    @Override
+    void buildFinished(BuildResult buildResult) {
+        systemPrintln("buildFinished, 完成项目的编译...")
+    }
+})
+
+this.gradle.settingsEvaluated { Settings settings ->
+    systemPrintln("single settingsEvaluated setting.gradle初始化完成 root project name  = " + settings.rootProject.name)
+}
+
+this.gradle.projectsLoaded {
+    systemPrintln("single projectsLoaded 完成项目构建初始化阶段")
+}
+
+this.gradle.allprojects {
+    systemPrintln("all projects, the project name = ${it.name}")
+
+    it.beforeEvaluate {
+        systemPrintln(String.format("%s , before Evaluate", it.name))
+    }
+    it.afterEvaluate {
+        systemPrintln(String.format("%s , after Evaluate", it.name))
+    }
+}
+
+this.gradle.beforeProject {
+    systemPrintln(String.format("%s , before project ", it.name))
+}
+
+this.gradle.afterProject {
+    systemPrintln(String.format("%s , after project ", it.name))
+}
+
+//执行阶段生命周期监听
+this.gradle.taskGraph.whenReady {
+    gradle.taskGraph.allTasks.each {
+        systemPrintln("Task each  = " + it.name)
+    }
+}
+
+this.gradle.taskGraph.beforeTask {
+    systemPrintln("Task before  = " + it.name)
+}
+
+this.gradle.taskGraph.afterTask {
+    systemPrintln("Task after  = " + it.name)
+}
+
+void systemPrintln(String info) {
+    println("<=== gradle lifecycle listener ===> $info")
+}

@@ -1,7 +1,7 @@
 ## Gradle Study
 
 ### gradle 声明周期监听
-- settings.gradle
+- lifecycle_listener.gradle
 ```groovy
 this.gradle.addBuildListener(new BuildListener() {
 
@@ -69,31 +69,31 @@ this.gradle.taskGraph.afterTask {
  ```
 运行结果：
 ```
-settingsEvaluated, setting.gradle初始化完成, root project name  = GradleStudy
-single settingsEvaluated setting.gradle初始化完成 root project name  = GradleStudy
-projectsLoaded, project 完成项目构建初始化阶段...
-all projects, the project name = GradleStudy
-all projects, the project name = app
-single projectsLoaded 完成项目构建初始化阶段
+<=== gradle lifecycle listener ===> settingsEvaluated, setting.gradle初始化完成, root project name  = GradleStudy
+<=== gradle lifecycle listener ===> single settingsEvaluated setting.gradle初始化完成 root project name  = GradleStudy
+<=== gradle lifecycle listener ===> projectsLoaded, project 完成项目构建初始化阶段...
+<=== gradle lifecycle listener ===> all projects, the project name = GradleStudy
+<=== gradle lifecycle listener ===> all projects, the project name = app
+<=== gradle lifecycle listener ===> single projectsLoaded 完成项目构建初始化阶段
 
 > Configure project :
-GradleStudy , before project 
-GradleStudy , before Evaluate
-GradleStudy , after project 
-GradleStudy , after Evaluate
+<=== gradle lifecycle listener ===> GradleStudy , before project
+<=== gradle lifecycle listener ===> GradleStudy , before Evaluate
+<=== gradle lifecycle listener ===> GradleStudy , after project
+<=== gradle lifecycle listener ===> GradleStudy , after Evaluate
 
 > Configure project :app
-app , before project 
-app , before Evaluate
-app , after project 
-app , after Evaluate
-projectsEvaluated, 完成项目的配置阶段...
-Task each  = prepareKotlinBuildScriptModel
+<=== gradle lifecycle listener ===> app , before project
+<=== gradle lifecycle listener ===> app , before Evaluate
+<=== gradle lifecycle listener ===> app , after project
+<=== gradle lifecycle listener ===> app , after Evaluate
+<=== gradle lifecycle listener ===> projectsEvaluated, 完成项目的配置阶段...
+<=== gradle lifecycle listener ===> Task each  = prepareKotlinBuildScriptModel
 
 > Task :prepareKotlinBuildScriptModel UP-TO-DATE
-Task before  = prepareKotlinBuildScriptModel
-Task after  = prepareKotlinBuildScriptModel
-buildFinished, 完成项目的编译...
+<=== gradle lifecycle listener ===> Task before  = prepareKotlinBuildScriptModel
+<=== gradle lifecycle listener ===> Task after  = prepareKotlinBuildScriptModel
+<=== gradle lifecycle listener ===> buildFinished, 完成项目的编译...
 ```
 
 

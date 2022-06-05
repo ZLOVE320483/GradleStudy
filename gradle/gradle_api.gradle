@@ -1,0 +1,15 @@
+systemPrintln("gradleHomeDir路径: ${this.gradle.gradleHomeDir.absolutePath}")
+systemPrintln("gradleUserHomeDir路径: ${this.gradle.gradleUserHomeDir.absolutePath}")
+systemPrintln("gradle version: ${this.gradle.gradleVersion}")
+
+this.gradle.afterProject {
+    systemPrintln("size: ${this.gradle.includedBuilds.size()}")
+    this.gradle.includedBuilds.forEach { includedBuild ->
+        systemPrintln("includedBuild name: ${includedBuild.name}")
+        systemPrintln("includedBuild projectDir absolutePath: ${includedBuild.projectDir.absolutePath}")
+    }
+}
+
+void systemPrintln(String info) {
+    println("<=== gradle api ===> $info")
+}
