@@ -51,16 +51,16 @@ this.gradle.afterProject {
 //执行阶段生命周期监听
 this.gradle.taskGraph.whenReady {
     gradle.taskGraph.allTasks.each {
-        systemPrintln("Task each  = " + it.name)
+        // systemPrintln("Task each  = " + it.name)
     }
 }
 
 this.gradle.taskGraph.beforeTask {
-    systemPrintln("Task before  = " + it.name)
+    // systemPrintln("Task before  = " + it.name)
 }
 
 this.gradle.taskGraph.afterTask {
-    systemPrintln("Task after  = " + it.name)
+    // systemPrintln("Task after  = " + it.name)
 }
 
 void systemPrintln(String info) {
