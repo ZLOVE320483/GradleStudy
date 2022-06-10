@@ -7,10 +7,10 @@ import java.io.File
 /**
  * Author by zlove, Email zlove.zhang@bytedance.com, Date on 2022/6/9.
  */
-class ManifestExtension(var buildTypes: NamedDomainObjectContainer<BuildType>) {
+open class ManifestExtension(var buildTypes: NamedDomainObjectContainer<BuildType>) {
 
     companion object {
-        const val TAG = "ManifestExtension"
+        const val TAG = "manifestExtension"
     }
 
     private var compileSdkVersion: Int = 0

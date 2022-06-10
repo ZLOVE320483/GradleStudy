@@ -1,31 +1,66 @@
 package com.zlove.gradle.plugins
 
-import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.AppExtension
+import com.zlove.gradle.plugins.extensions.BuildType
+import com.zlove.gradle.plugins.extensions.ManifestExtension
+import com.zlove.gradle.plugins.manager.SetLatestVersionTaskManager
 import com.zlove.gradle.plugins.utils.SystemPrint
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.util.regex.Pattern
 
 /**
  * Author by zlove, Email zlove.zhang@bytedance.com, Date on 2022/6/8.
  */
 class ManifestProcessPlugin: Plugin<Project> {
 
+    private var variantName: String = ""
+
     override fun apply(project: Project) {
-        SystemPrint.outPrintln("--- ManifestProcessPlugin ---")
-        getValidVariantNameInBuild(project)
+        createExtension(project)
+        if (!getValidVariantNameInBuild(project)) {
+            return
+        }
+        SystemPrint.outPrintln("variantName --- $variantName")
+        addTasksForVariantAfterEvaluate(project)
+    }
+
+    private fun createExtension(project: Project) {
+        project.extensions.create(ManifestExtension.TAG,
+            ManifestExtension::class.javaObjectType,
+            project.container(BuildType::class.javaObjectType))
+    }
+
+    private fun addTasksForVariantAfterEvaluate(project: Project) {
+        project.afterEvaluate {
+            try {
+                addSetLatestVersionForMergedManifestAfterEvaluate(project)
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
+    private fun addSetLatestVersionForMergedManifestAfterEvaluate(project: Project) {
+        val setLatestVersionTaskManager = SetLatestVersionTaskManager(project, variantName)
+        setLatestVersionTaskManager.addSetLatestVersionForMergedManifestAfterEvaluate()
     }
 
     private fun getValidVariantNameInBuild(project: Project): Boolean {
-        project.extensions.getByType(AndroidComponentsExtension::class.java).onVariants {
-            SystemPrint.outPrintln(it.name)
+        val parameter = project.gradle.startParameter.taskRequests.toString()
+        val regex = if (parameter.contains("assemble")) {
+            ":app:assemble(\\w+)"
+        } else {
+            ":app:generate(\\w+)"
         }
-
-        project.afterEvaluate {
-            SystemPrint.outPrintln("size --- ${project.extensions.getByType(AppExtension::class.java).applicationVariants.size}")
-            project.extensions.getByType(AppExtension::class.java).applicationVariants.forEach {
-                SystemPrint.outPrintln(it.name)
-            }
+        val pattern = Pattern.compile(regex)
+        val matcher = pattern.matcher(parameter)
+        if (matcher.find()) {
+            //group(0)整个字符串;group(1)第一个括号内的内容;group(2)第二个括号内的内容
+            variantName = matcher.group(1)
+        }
+        //SystemPrint.outPrintln(variantName)
+        if (variantName.isBlank()) {
+            return false
         }
         return true
     }
