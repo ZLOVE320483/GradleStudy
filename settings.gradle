@@ -3,6 +3,10 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven {
+            url '../repo'
+        }
+        mavenLocal()
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +14,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url '../repo'
+        }
+        mavenLocal()
     }
 }
 rootProject.name = "GradleStudy"

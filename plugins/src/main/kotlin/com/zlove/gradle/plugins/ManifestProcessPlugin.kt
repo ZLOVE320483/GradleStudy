@@ -1,8 +1,10 @@
 package com.zlove.gradle.plugins
 
+import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.zlove.gradle.plugins.extensions.BuildType
 import com.zlove.gradle.plugins.extensions.ManifestExtension
 import com.zlove.gradle.plugins.manager.SetLatestVersionTaskManager
+import com.zlove.gradle.plugins.tasks.AddExportForPackageManifestTask
 import com.zlove.gradle.plugins.utils.SystemPrint
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -33,11 +35,28 @@ class ManifestProcessPlugin: Plugin<Project> {
     private fun addTasksForVariantAfterEvaluate(project: Project) {
         project.afterEvaluate {
             try {
-                addSetLatestVersionForMergedManifestAfterEvaluate(project)
+                // addSetLatestVersionForMergedManifestAfterEvaluate(project)
+                addExportForPackageManifestAfterEvaluate(project)
             } catch (e: Exception) {
 
             }
         }
+    }
+
+    private fun addExportForPackageManifestAfterEvaluate(project: Project) {
+        val processManifestTask =
+            project.tasks.getByName("process${variantName}MainManifest")
+        if (processManifestTask !is ProcessApplicationManifest) {
+            return
+        }
+        //创建自定义Task
+        val exportTask = project.tasks.register(
+            AddExportForPackageManifestTask.TAG,
+            AddExportForPackageManifestTask::class.javaObjectType,
+        ).get()
+        exportTask.setInputMainManifest(processManifestTask.mainManifest.get())
+        exportTask.setInputManifests(processManifestTask.getManifests())
+        processManifestTask.dependsOn(exportTask)
     }
 
     private fun addSetLatestVersionForMergedManifestAfterEvaluate(project: Project) {

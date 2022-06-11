@@ -16,18 +16,22 @@ println("maven-publish ARTIFACT_ID = $ARTIFACT_ID")
 // ------------------------------------------------------------------------
 // 发布到本地 maven 仓库的任务
 // ------------------------------------------------------------------------
-
 publishing {
-    publications {
-        maven(MavenPublication) {
+    repositories {
+        maven {
+            url REPO_URL
+        }
+    }
+    publications {PublicationContainer publication->
+      // 名称可以随便定义，这里定义成 maven，是因为我的 aar 包是发布到 maven 仓库的，所以这里为了见名知义，定义成了 maven
+      // 任务名称：maven
+        maven(MavenPublication) {// 容器可配置的信息 MavenPublication
+            // 依赖 bundleReleaseAar 任务，并上传其产出的aar
+            afterEvaluate { artifact(tasks.getByName("bundleReleaseAar")) } // 方式一：生成aar包
+            // artifact "$buildDir/outputs/aar/${project.name}-release.aar" // 方式二：指定生成的aar路径
             groupId = GROUP_ID
             artifactId = ARTIFACT_ID
             version = VERSION_NAME
-        }
-    }
-    repositories {
-        maven {
-            url = REPO_URL
         }
     }
 }
