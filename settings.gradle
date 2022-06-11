@@ -14,6 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "GradleStudy"
 include ':app'
+include ':sub-module'
 includeBuild('plugins')
 
 // apply from: file("./gradle/lifecycle_listener.gradle")
