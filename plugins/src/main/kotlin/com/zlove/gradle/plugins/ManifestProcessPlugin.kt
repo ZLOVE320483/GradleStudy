@@ -3,7 +3,6 @@ package com.zlove.gradle.plugins
 import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.zlove.gradle.plugins.extensions.BuildType
 import com.zlove.gradle.plugins.extensions.ManifestExtension
-import com.zlove.gradle.plugins.manager.SetLatestVersionTaskManager
 import com.zlove.gradle.plugins.tasks.AddExportForPackageManifestTask
 import com.zlove.gradle.plugins.utils.SystemPrint
 import org.gradle.api.Plugin
@@ -35,7 +34,6 @@ class ManifestProcessPlugin: Plugin<Project> {
     private fun addTasksForVariantAfterEvaluate(project: Project) {
         project.afterEvaluate {
             try {
-                // addSetLatestVersionForMergedManifestAfterEvaluate(project)
                 addExportForPackageManifestAfterEvaluate(project)
             } catch (e: Exception) {
 
@@ -57,11 +55,6 @@ class ManifestProcessPlugin: Plugin<Project> {
         exportTask.setInputMainManifest(processManifestTask.mainManifest.get())
         exportTask.setInputManifests(processManifestTask.getManifests())
         processManifestTask.dependsOn(exportTask)
-    }
-
-    private fun addSetLatestVersionForMergedManifestAfterEvaluate(project: Project) {
-        val setLatestVersionTaskManager = SetLatestVersionTaskManager(project, variantName)
-        setLatestVersionTaskManager.addSetLatestVersionForMergedManifestAfterEvaluate()
     }
 
     private fun getValidVariantNameInBuild(project: Project): Boolean {

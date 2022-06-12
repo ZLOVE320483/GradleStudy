@@ -1,29 +1,7 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-        maven {
-            url '../repo'
-        }
-        mavenLocal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url '../repo'
-        }
-        mavenLocal()
-    }
-}
 rootProject.name = "GradleStudy"
 include ':app'
 include ':sub-module'
-includeBuild('plugins')
+include ':plugins'
 
 // apply from: file("./gradle/lifecycle_listener.gradle")
 // apply from: file("./gradle/gradle_api.gradle")

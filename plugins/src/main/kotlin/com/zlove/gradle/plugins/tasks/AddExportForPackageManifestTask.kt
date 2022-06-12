@@ -2,7 +2,7 @@ package com.zlove.gradle.plugins.tasks
 
 import com.zlove.gradle.plugins.utils.SystemPrint
 import groovy.util.Node
-import groovy.xml.XmlParser
+import groovy.util.XmlParser
 import groovy.xml.XmlUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
@@ -20,10 +20,19 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         const val ATTRIBUTE_NAME = "{http://schemas.android.com/apk/res/android}name"
     }
 
+    /**
+     * 所有的被打包到APP的manifest文件,但不包括app下的manifest文件
+     */
     private lateinit var inputManifests: FileCollection
 
+    /**
+     * app下对应的manifest文件
+     */
     private lateinit var inputMainManifest: File
 
+    /**
+     * 是否在处理app下的manifest文件,如果是app下的manifest文件只报错提示,不处理
+     */
     private var isHandlerMainManifest: Boolean = false
 
     fun setInputManifests(input: FileCollection) {
@@ -41,6 +50,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         handlerMainManifest()
     }
 
+    /**
+     * 非app下的manifest文件
+     */
     private fun handlerNonMainManifest() {
         isHandlerMainManifest = false
         SystemPrint.errorPrintln(
@@ -54,6 +66,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         }
     }
 
+    /**
+     * 处理主app下的manifest文件
+     */
     private fun handlerMainManifest() {
         isHandlerMainManifest = true
         SystemPrint.errorPrintln(
@@ -65,6 +80,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         readAndWriteManifestForExported(inputMainManifest)
     }
 
+    /**
+     * 处理非app下的manifest文件
+     */
     private fun readAndWriteManifestForExported(manifest: File) {
         if (!manifest.exists()) {
             return
@@ -73,6 +91,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         writeComponentToManifest(manifest, node)
     }
 
+    /**
+     * 读取manifest文件下的所有内容,存放到node中
+     */
     private fun readAndResetComponentFromManifest(manifest: File): Node {
         val xmlParser = XmlParser()
         //得到所有的结点树
@@ -103,6 +124,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         return node
     }
 
+    /**
+     * 处理没有android:exported的component
+     */
     private fun handlerNodeWithoutExported(node: Node) {
         //已经含有android:exported
         if (hasAttributeExportedInNode(node)) {
@@ -121,6 +145,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
 
     }
 
+    /**
+     * 为符合条件的node添加android:exported
+     */
     private fun handlerNodeAddExported(node: Node, name: String) {
         if (isHandlerMainManifest) {
             handlerNodeAddExportedForMainManifest(name)
@@ -129,6 +156,9 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         handlerNodeAddExportedForPackagedManifest(node, name)
     }
 
+    /**
+     * 处理app的manifest文件,仅做报错信息提示
+     */
     private fun handlerNodeAddExportedForMainManifest(name: String) {
         SystemPrint.errorPrintln(
             TAG, "<<!!! error \n " +
@@ -136,11 +166,17 @@ open class AddExportForPackageManifestTask: DefaultTask() {
         )
     }
 
+    /**
+     * 处理被打包到APP的其他manifest文件中添加android:exported
+     */
     private fun handlerNodeAddExportedForPackagedManifest(node: Node, name: String) {
         SystemPrint.outPrintln(TAG, "为 < $name > 添加android:exported=true")
         node.attributes()["android:exported"] = true
     }
 
+    /**
+     * 将更新之后的node重新写入原文件
+     */
     private fun writeComponentToManifest(manifest: File, node: Node) {
         if (isHandlerMainManifest) {
             //如果是主app的manifest文件,只报错,不改写,需要开发者自行配置
