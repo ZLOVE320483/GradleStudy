@@ -1,0 +1,44 @@
+def beginOfSettings = System.currentTimeMillis()
+def beginOfConfig
+def configHasBegin = false
+def beginOfProjectConfig = new HashMap()
+def beginOfProjectExecute
+
+gradle.projectsLoaded {
+    systemPrintln("[初始化阶段]耗时: ${System.currentTimeMillis() - beginOfSettings}ms")
+}
+
+gradle.beforeProject { project ->
+    if (!configHasBegin) {
+        configHasBegin = true
+        beginOfConfig = System.currentTimeMillis()
+    }
+    beginOfProjectConfig.put(project, System.currentTimeMillis())
+}
+
+gradle.afterProject { project ->
+    def begin = beginOfProjectConfig.get(project)
+    systemPrintln("[配置阶段] ${project.name} 耗时: ${System.currentTimeMillis() - begin}ms")
+}
+
+gradle.taskGraph.whenReady {
+    systemPrintln("[配置阶段] 总耗时: ${System.currentTimeMillis() - beginOfConfig}ms")
+    beginOfProjectExecute = System.currentTimeMillis()
+}
+
+gradle.taskGraph.beforeTask {task ->
+    task.doFirst {
+        task.ext.beginOfTask = System.currentTimeMillis()
+    }
+    task.doLast {
+        systemPrintln("[执行阶段] ${task.name}耗时: ${System.currentTimeMillis() - task.beginOfTask}ms")
+    }
+}
+
+gradle.buildFinished {
+    systemPrintln("[执行阶段] 总耗时: ${System.currentTimeMillis()- beginOfProjectExecute}ms")
+}
+
+void systemPrintln(String info) {
+    println("<=== time consuming ===> $info")
+}
