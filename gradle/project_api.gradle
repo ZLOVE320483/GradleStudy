@@ -1,0 +1,22 @@
+this.getProjects()
+this.getSubProjects()
+
+def getProjects() {
+    this.getAllprojects().eachWithIndex { project, index ->
+        if (index == 0) {
+            systemPrintln("Root Project is $project")
+        } else {
+            systemPrintln("child Project is $project")
+        }
+    }
+}
+
+def getSubProjects() {
+    this.getSubprojects().each {project ->
+        systemPrintln("sub Project is $project")
+    }
+}
+
+void systemPrintln(String info) {
+    println("<=== project api ===> $info")
+}

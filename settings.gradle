@@ -27,4 +27,4 @@ includeBuild('plugins')
 
 // apply from: file("./gradle/lifecycle_listener.gradle")
 // apply from: file("./gradle/gradle_api.gradle")
-apply from: file("./gradle/time_consuming.gradle")
+// apply from: file("./gradle/time_consuming.gradle")
