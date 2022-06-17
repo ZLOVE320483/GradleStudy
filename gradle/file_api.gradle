@@ -1,0 +1,31 @@
+systemPrintln("the root file path is: ${getRootDir().absolutePath}")
+systemPrintln("the build file path is: ${getBuildDir().absolutePath}")
+systemPrintln("this Project file path is: ${getProjectDir().absolutePath}")
+
+systemPrintln(this.getContent("./gradle/project_api.gradle"))
+
+def getContent(String path) {
+    try {
+        def mFile = file(path)
+        return mFile.text
+    } catch (GradleException e) {
+        systemPrintln(e.toString())
+        return null
+    }
+}
+
+def getContent(String path1, String path2) {
+    try {
+        // 不同与 new file 的需要传入 绝对路径 的方式，
+        // file 从相对于当前的 project 工程开始查找
+        def mFiles = files(path1, path2)
+        return mFiles[0].text + mFiles[1].text
+    } catch (GradleException e) {
+        println e.toString()
+        return null
+    }
+}
+
+void systemPrintln(String info) {
+    println("<=== project api ===> $info")
+}
