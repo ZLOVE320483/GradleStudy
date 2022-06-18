@@ -4,6 +4,8 @@ plugins {
     id 'com.zlove.gradle.plugin' apply true
 }
 
+apply from: file("../gradle/flavor_api.gradle")
+
 manifestExtension {
     versionManager file("version.xml")
 }
@@ -37,6 +39,16 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+
+    flavorDimensions "size", "color"
+    productFlavors {
+        big {
+            dimension "size"
+        }
+        red {
+            dimension "color"
+        }
     }
 }
 

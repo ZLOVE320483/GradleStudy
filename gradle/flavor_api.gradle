@@ -1,0 +1,10 @@
+this.project.afterEvaluate {
+    this.android.applicationVariants.all { variant ->
+        systemPrintln("name: ${variant.name}, baseName: ${variant.baseName}")
+    }
+}
+
+
+void systemPrintln(String info) {
+    println("<=== flavor api ===> $info")
+}
