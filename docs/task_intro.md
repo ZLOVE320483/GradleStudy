@@ -70,3 +70,10 @@
 | createDebugCompatibleScreenManifests | CompatibleScreensManifest | 生成具有给定屏幕密度与尺寸列表的 （兼容屏幕）节点清单 |
 | extractDeepLinksDebug | ExtractDeepLinksTask | 用于抽取一系列 DeepLink（深度链接技术，主要应用场景是通过Web页面直接调用Android原生app，并且把需要的参数通过Uri的形式，直接传递给app，节省用户的注册成本） |
 | compileDebugAidl | AidlCompile | 编译 AIDL 文件 |
+| compileDebugRenderscript | RenderscriptCompile | 编译 Renderscript 文件 |
+| generateDebugResources | 在 TaskManager.createAnchorTasks 方法中通过 taskFactory.register(taskName)的方式注册一个 task	 | 空 task，锚点 |
+| processDebugManifest | ProcessApplicationManifest | 处理 manifest 文件 |
+| mergeDebugResources | MergeResources | 使用 AAPT2 合并资源文件 |
+| processDebugResources | ProcessAndroidResources | 用于处理资源并生成 R.class 文件 |
+| compileDebugJavaWithJavac | JavaCompileCreationAction（这里是一个 Action，从 gradle 源码中可以看到从 TaskFactory 中注册一个 Action 可以得到与之对应的 Task，因此，Task 即 Action，Action 即 Task） | 用于执行 Java 源码的编译 |
+| compileDebugSources | MergeSourceSetFolders.MergeShaderSourceFoldersCreationAction | 合并 Shader 文件 |

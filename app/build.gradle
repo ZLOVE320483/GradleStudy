@@ -37,10 +37,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures {
-        viewBinding true
-    }
-
     flavorDimensions "size", "color"
     productFlavors {
         big {
