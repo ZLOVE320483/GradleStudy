@@ -1,5 +1,6 @@
 package com.zlove.gradle.plugins
 
+import com.android.build.gradle.AppExtension
 import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.zlove.gradle.plugins.extensions.BuildType
 import com.zlove.gradle.plugins.extensions.ManifestExtension
@@ -35,6 +36,11 @@ class ManifestProcessPlugin: Plugin<Project> {
         project.afterEvaluate {
             try {
                 addExportForPackageManifestAfterEvaluate(project)
+                val android = project.extensions.getByType(AppExtension::class.java)
+                SystemPrint.outPrintln("Variant", "android --- $android")
+                android.variantFilter {
+                    SystemPrint.outPrintln("Variant", "name --- ${it.name}")
+                }
             } catch (e: Exception) {
 
             }

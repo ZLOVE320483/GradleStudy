@@ -13,7 +13,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.zlove.gradle.study:manifestplugin:1.0.0'
     }
 }
 

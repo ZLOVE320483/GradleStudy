@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'com.zlove.gradle.study.menifastplugin'
+    id 'com.zlove.gradle.study.manifestplugin'
 }
 
 android {
