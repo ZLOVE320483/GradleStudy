@@ -36,11 +36,6 @@ class ManifestProcessPlugin: Plugin<Project> {
         project.afterEvaluate {
             try {
                 addExportForPackageManifestAfterEvaluate(project)
-                val android = project.extensions.getByType(AppExtension::class.java)
-                SystemPrint.outPrintln("Variant", "android --- $android")
-                android.variantFilter {
-                    SystemPrint.outPrintln("Variant", "name --- ${it.name}")
-                }
             } catch (e: Exception) {
 
             }

@@ -1,7 +1,7 @@
 rootProject.name = "GradleStudy"
 include ':app'
 include ':sub-module'
-include ':plugins'
+// include ':plugins'
 
 // apply from: file("./gradle/lifecycle_listener.gradle")
 // apply from: file("./gradle/gradle_api.gradle")
