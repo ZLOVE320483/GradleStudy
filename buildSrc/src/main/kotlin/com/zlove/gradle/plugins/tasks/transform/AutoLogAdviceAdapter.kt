@@ -1,9 +1,7 @@
 package com.zlove.gradle.plugins.tasks.transform
 
 import com.zlove.gradle.plugins.utils.SystemPrint
-import org.objectweb.asm.Attribute
-import org.objectweb.asm.Label
-import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.*
 import org.objectweb.asm.commons.AdviceAdapter
 
 /**
@@ -26,11 +24,78 @@ open class AutoLogAdviceAdapter(
         if (isInitMethod() || methodVisitor == null) {
             return
         }
-
+        SystemPrint.outPrintln(TAG, "--- onMethodEnter --- $name, nextLocal --- $nextLocal")
+        SystemPrint.outPrintln(TAG, "argumentTypes.size = ${argumentTypes.size}")
+        methodVisitor.visitMethodInsn(
+            INVOKESTATIC,
+            "java/lang/System",
+            "currentTimeMillis",
+            "()J",
+            false
+        )
+        startVar = newLocal(Type.LONG_TYPE)
+        SystemPrint.outPrintln(TAG, "new local is $startVar")
+        methodVisitor.visitVarInsn(LSTORE, startVar)
+        super.onMethodEnter()
     }
 
     override fun onMethodExit(opcode: Int) {
+        if (isInitMethod() || methodVisitor == null || startVar == 0) {
+            return
+        }
+        SystemPrint.outPrintln(TAG, " -- onMethodExit -- startVar: $startVar, nextLocal: $nextLocal.")
+        methodVisitor.visitMethodInsn(
+            INVOKESTATIC,
+            "java/lang/System",
+            "currentTimeMillis",
+            "()J",
+            false
+        )
 
+        methodVisitor.visitVarInsn(LLOAD, startVar)
+        methodVisitor.visitInsn(LSUB)
+        //存储sub
+        val subVar = newLocal(Type.LONG_TYPE)
+        SystemPrint.outPrintln(TAG, "subVar = $subVar,  nextLocal: $nextLocal")
+        methodVisitor.visitVarInsn(LSTORE, subVar)
+
+        //关键点4的实现
+        //输出日志
+        methodVisitor.visitLdcInsn("ExecutionTime")
+        val log = "\' $name \' execution is %d ms"
+        methodVisitor.visitLdcInsn(log)
+        methodVisitor.visitInsn(Opcodes.ICONST_1)
+        methodVisitor.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object")
+        methodVisitor.visitInsn(Opcodes.DUP)
+        methodVisitor.visitInsn(Opcodes.ICONST_0)
+        methodVisitor.visitVarInsn(Opcodes.LLOAD, subVar)
+        methodVisitor.visitMethodInsn(
+            Opcodes.INVOKESTATIC,
+            "java/lang/Long",
+            "valueOf",
+            "(J)Ljava/lang/Long;",
+            false
+        )
+        methodVisitor.visitInsn(AASTORE)
+        methodVisitor.visitMethodInsn(
+            INVOKESTATIC,
+            "java/lang/String",
+            "format",
+            "(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
+            false
+        )
+        methodVisitor.visitMethodInsn(
+            INVOKESTATIC,
+            "android/util/Log",
+            "v",
+            "(Ljava/lang/String;Ljava/lang/String;)I",
+            false
+        )
+        //关键点4的实现, 一定要有，否则该地方就会作为返回值返回
+        methodVisitor.visitInsn(POP)
+        //关键点5的实现
+        returnValue()
+        super.onMethodExit(opcode)
     }
 
     private fun isInitMethod(): Boolean {
